@@ -1039,7 +1039,9 @@ void ofxSVG::stroke(string colorHex, int weight) {
 	s << weight;
 	currentAttributes["strokewidth"] = s.str();
 
-
+	if (currentAttributes["fill-opacity"] == "0") {
+		ofLogWarning("ofxSVG.cpp ofxSVG::fill You are attempting to set a fill color but the fill opacity is set to 0.");
+	}
 }
 
 void ofxSVG::fill(string colorHex) {
@@ -1051,14 +1053,20 @@ void ofxSVG::fill(string colorHex) {
 	float b = (rgb) & 0xFF;
 	
 	currentAttributes["color"] = colorHex;
+	if (currentAttributes["fill-opacity"] == "0") {
+		ofLogWarning("ofxSVG.cpp ofxSVG::fill You are attempting to set a fill color but the fill opacity is set to 0.");
+	}
 }
 
 void ofxSVG::noFill() {
 
 	currentAttributes["color"] = "";
+	currentAttributes["fill-opacity"] = "0";
+
 }
 void ofxSVG::noStroke(){
 	currentAttributes["stroke"] = "";
+	currentAttributes["stroke-opacity"] = "0";
 }
 
 void ofxSVG::setOpacity(float percent) {
