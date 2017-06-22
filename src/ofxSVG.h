@@ -67,7 +67,9 @@ class ofxSVG{
 		void noFill();                                      
 		void noStroke();                                    
 
-		void setOpacity(float percent);                     
+		void setOpacity(float percent);
+		void setFillOpacity(float percent);
+		void setStrokeOpacity(float percent);
 
 		void translate(float tx, float ty);
 		void rotate(float r);
@@ -91,6 +93,9 @@ class ofxSVG{
 	
 	void parseFill(ofxSVGXml *svgXml, ofxSVGObject *obj, string opacity, string fill);
 	void parseStroke(ofxSVGXml *svgXml, ofxSVGObject *obj, string stroke, string fill);
+
+	void clear();
+
 	
     private:
 	

@@ -252,8 +252,8 @@ void ofxSVG::parseImage() {
 	ofxSVGImage *img = new ofxSVGImage();
 	img->tex = new ofTexture;
 	
-	img->tex->allocate(tmpimg.width, tmpimg.height, getImageColorType(tmpimg));
-	img->tex->loadData(tmpimg.getPixels(), tmpimg.width, tmpimg.height, getImageColorType(tmpimg));
+	img->tex->allocate(tmpimg.getWidth(), tmpimg.getHeight(), getImageColorType(tmpimg));
+	img->tex->loadData(tmpimg.getPixels(), tmpimg.getWidth(), tmpimg.getHeight(), getImageColorType(tmpimg));
 	
 	img->tex->draw(x, y, imgWidth, imgHeight);
 	
@@ -771,6 +771,7 @@ bool ofxSVG::isInsidePolygon(ofxSVGPath *path, ofPoint p)
 	else
 	return(true);
 	*/
+	return true;
 }
 
 void ofxSVG::parsePath() {
@@ -865,6 +866,7 @@ void ofxSVG::createRootSvg() {
 	saveXml.addTag("svg");
 	saveXml.addAttribute("svg", "xmlns", "http://www.w3.org/2000/svg", 0);
 	saveXml.addAttribute("svg", "xmlns:xlink", "http://www.w3.org/1999/xlink", 0);
+	saveXml.addAttribute("svg", "shape-rendering", "crispEdges", 0); // Added by James Bentley 22/6/17
 	saveXml.addAttribute("svg", "version", "1.1", 0);
 
 }
@@ -883,6 +885,14 @@ void ofxSVG::addLayer(string layerName){
 void ofxSVG::saveToFile(string filename) {
 	saveXml.saveFile(filename);
 }
+
+void ofxSVG::clear() {
+	for (int i = 0; i < saveXml.getNumTags(); i++) {
+		saveXml.popTag();
+	}
+	saveXml.clear();
+}
+
 
 void ofxSVG::rect(float x, float y, float w, float h) {
 
@@ -941,8 +951,8 @@ void ofxSVG::beginPolygon(){
 	saveXml.setAttribute("polygon", "fill", currentAttributes["color"], numPolygons);
 	saveXml.setAttribute("polygon", "stroke", currentAttributes["stroke"], numPolygons);
 	saveXml.setAttribute("polygon", "stroke-width", currentAttributes["strokewidth"], numPolygons);
-
-
+	saveXml.setAttribute("polygon", "fill-opacity", currentAttributes["fill-opacity"], numPolygons);
+	saveXml.setAttribute("polygon", "stroke-opacity", currentAttributes["stroke-opacity"], numPolygons);
 }
 void ofxSVG::endPolygon(){
 	currentAttributes["drawingpolygon"] = "false";
@@ -1053,7 +1063,17 @@ void ofxSVG::noStroke(){
 
 void ofxSVG::setOpacity(float percent) {
 
-	currentAttributes["opacity"] = "percent";
+	currentAttributes["opacity"] = ofToString(percent);
+}
+
+void ofxSVG::setFillOpacity(float percent) {
+
+	currentAttributes["fill-opacity"] = ofToString(percent);
+}
+
+void ofxSVG::setStrokeOpacity(float percent) {
+
+	currentAttributes["stroke-opacity"] = ofToString(percent);
 }
 
 void ofxSVG::translate(float tx, float ty) {
@@ -1118,6 +1138,8 @@ string ofxSVG::createAttribute(string element, ...) { // va_args ftw!
 		
 		
 	}
+
+	return "";
 }
 
 void ofxSVG::parseStroke(ofxSVGXml *svgXml, ofxSVGObject *obj, string stroke, string opacity) {
